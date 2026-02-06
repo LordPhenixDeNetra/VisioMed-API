@@ -1,9 +1,14 @@
 from datetime import date
-from typing import Optional
+from typing import Optional, TYPE_CHECKING
 from sqlalchemy import ForeignKey, Numeric, Date, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.db.base import Base, TimestampMixin, UUIDMixin
+
+if TYPE_CHECKING:
+    from app.db.models.service import Service
+    from app.db.models.acte_type import ActeType
+    from app.db.models.type_prise_charge import TypePriseCharge
 
 class Tarif(Base, TimestampMixin, UUIDMixin):
     """

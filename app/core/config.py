@@ -1,4 +1,4 @@
-from typing import List, Union
+from typing import List, TYPE_CHECKING
 from pydantic import AnyHttpUrl, PostgresDsn, computed_field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
@@ -22,8 +22,7 @@ class Settings(BaseSettings):
     POSTGRES_PASSWORD: str
     POSTGRES_DB: str
 
-    @computed_field
-    @property
+    @computed_field(return_type=str)
     def DATABASE_URL(self) -> str:
         """
         Constructs the SQLAlchemy connection string.
@@ -60,4 +59,7 @@ class Settings(BaseSettings):
     )
 
 
-settings = Settings()
+if TYPE_CHECKING:
+    settings: Settings
+else:
+    settings = Settings()

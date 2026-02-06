@@ -1,12 +1,13 @@
 from typing import List, Any
 from io import BytesIO
 from datetime import datetime
-import pandas as pd
-from openpyxl import Workbook
-from reportlab.lib import colors
-from reportlab.lib.pagesizes import letter
-from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph
-from reportlab.lib.styles import getSampleStyleSheet
+from importlib import import_module
+
+pd = import_module("pandas")
+colors = import_module("reportlab.lib.colors")
+pagesizes = import_module("reportlab.lib.pagesizes")
+platypus = import_module("reportlab.platypus")
+styles_module = import_module("reportlab.lib.styles")
 
 class ExportService:
     def generate_excel(self, data: List[dict], sheet_name: str = "Data") -> BytesIO:
@@ -25,28 +26,36 @@ class ExportService:
         Generate a simple PDF report with a table.
         """
         output = BytesIO()
-        doc = SimpleDocTemplate(output, pagesize=letter)
+        doc = platypus.SimpleDocTemplate(output, pagesize=pagesizes.letter)
         elements = []
         
-        styles = getSampleStyleSheet()
-        elements.append(Paragraph(title, styles['Title']))
-        elements.append(Paragraph(f"Généré le: {datetime.now().strftime('%d/%m/%Y %H:%M')}", styles['Normal']))
-        elements.append(Paragraph("<br/><br/>", styles['Normal']))
+        styles = styles_module.getSampleStyleSheet()
+        elements.append(platypus.Paragraph(title, styles["Title"]))
+        elements.append(
+            platypus.Paragraph(
+                f"Généré le: {datetime.now().strftime('%d/%m/%Y %H:%M')}", styles["Normal"]
+            )
+        )
+        elements.append(platypus.Paragraph("<br/><br/>", styles["Normal"]))
         
         # Table Data
         table_data = [headers] + data
         
         # Create Table
-        table = Table(table_data)
-        table.setStyle(TableStyle([
-            ('BACKGROUND', (0, 0), (-1, 0), colors.grey),
-            ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
-            ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
-            ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
-            ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
-            ('BACKGROUND', (0, 1), (-1, -1), colors.beige),
-            ('GRID', (0, 0), (-1, -1), 1, colors.black),
-        ]))
+        table = platypus.Table(table_data)
+        table.setStyle(
+            platypus.TableStyle(
+                [
+                    ("BACKGROUND", (0, 0), (-1, 0), colors.grey),
+                    ("TEXTCOLOR", (0, 0), (-1, 0), colors.whitesmoke),
+                    ("ALIGN", (0, 0), (-1, -1), "CENTER"),
+                    ("FONTNAME", (0, 0), (-1, 0), "Helvetica-Bold"),
+                    ("BOTTOMPADDING", (0, 0), (-1, 0), 12),
+                    ("BACKGROUND", (0, 1), (-1, -1), colors.beige),
+                    ("GRID", (0, 0), (-1, -1), 1, colors.black),
+                ]
+            )
+        )
         
         elements.append(table)
         doc.build(elements)

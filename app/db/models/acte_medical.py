@@ -1,9 +1,14 @@
 from datetime import datetime
-from typing import Optional
+from typing import Optional, TYPE_CHECKING
 from sqlalchemy import String, Text, ForeignKey, Numeric, DateTime
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.db.base import Base, TimestampMixin, UUIDMixin
+
+if TYPE_CHECKING:
+    from app.db.models.acte_type import ActeType
+    from app.db.models.type_prise_charge import TypePriseCharge
+    from app.db.models.user import Medecin, User
 
 class ActeMedical(Base, TimestampMixin, UUIDMixin):
     """

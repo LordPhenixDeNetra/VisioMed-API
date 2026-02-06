@@ -1,9 +1,8 @@
-from typing import Optional, List
-from sqlalchemy import String, Boolean, ForeignKey, Text
-from sqlalchemy.orm import Mapped, mapped_column, relationship
+from typing import Optional
+from sqlalchemy import String, Boolean, ForeignKey
+from sqlalchemy.orm import Mapped, mapped_column
 
 from app.db.base import Base, TimestampMixin, UUIDMixin
-from app.db.models.role import Role, user_roles
 
 # Constants for User Types (Identity)
 TYPE_ADMIN = "administrateur"

@@ -1,8 +1,8 @@
-from typing import Any, Generic, List, Optional, Type, TypeVar, Union
+from typing import Any, Generic, List, Optional, Type, TypeVar, Union, cast
 from uuid import UUID
 
 from pydantic import BaseModel
-from sqlalchemy import select, update, delete
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.db.base import Base
@@ -23,7 +23,8 @@ class BaseRepository(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
         return await db.get(self.model, id)
 
     async def get_by_uuid(self, db: AsyncSession, uuid: UUID) -> Optional[ModelType]:
-        query = select(self.model).where(self.model.uuid == uuid)
+        model = cast(Any, self.model)
+        query = select(self.model).where(model.uuid == uuid)
         result = await db.execute(query)
         return result.scalars().first()
 
@@ -32,7 +33,7 @@ class BaseRepository(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
     ) -> List[ModelType]:
         query = select(self.model).offset(skip).limit(limit)
         result = await db.execute(query)
-        return result.scalars().all()
+        return list(result.scalars().all())
 
     async def create(self, db: AsyncSession, *, obj_in: CreateSchemaType) -> ModelType:
         obj_in_data = obj_in.model_dump()

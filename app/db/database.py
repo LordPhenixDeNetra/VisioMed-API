@@ -1,4 +1,4 @@
-from typing import AsyncGenerator
+from typing import AsyncGenerator, cast
 from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker, AsyncSession
 
 from app.core.config import settings
@@ -6,7 +6,7 @@ from app.core.config import settings
 # Create Async Engine
 # echo=True allows seeing generated SQL queries in logs (useful for debugging)
 engine = create_async_engine(
-    settings.DATABASE_URL,
+    cast(str, settings.DATABASE_URL),
     echo=settings.DEBUG,
     future=True,
     pool_pre_ping=True,  # Check connection validity before using it

@@ -7,3 +7,23 @@ from app.db.models.acte_medical import ActeMedical
 from app.db.models.audit_log import AuditLog
 from app.db.models.refresh_token import RefreshToken
 from app.db.models.role import Role, Permission, user_roles, role_permissions
+
+__all__ = [
+    "User",
+    "Administrateur",
+    "Medecin",
+    "Secretaire",
+    "Visualiseur",
+    "Service",
+    "medecin_services",
+    "ActeType",
+    "TypePriseCharge",
+    "Tarif",
+    "ActeMedical",
+    "AuditLog",
+    "RefreshToken",
+    "Role",
+    "Permission",
+    "user_roles",
+    "role_permissions",
+]

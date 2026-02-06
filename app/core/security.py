@@ -1,8 +1,10 @@
 from datetime import datetime, timedelta, timezone
 from typing import Optional, Union, Any
-from jose import jwt
-from passlib.context import CryptContext
+from importlib import import_module
 from app.core.config import settings
+
+jwt = import_module("jose.jwt")
+CryptContext = import_module("passlib.context").CryptContext
 
 # Password Hashing Configuration
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")

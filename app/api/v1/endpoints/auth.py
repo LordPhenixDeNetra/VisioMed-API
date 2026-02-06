@@ -1,8 +1,8 @@
 from typing import Annotated
+from importlib import import_module
 from fastapi import APIRouter, Depends, HTTPException, status, Body
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.ext.asyncio import AsyncSession
-from jose import jwt, JWTError
 from pydantic import ValidationError
 from datetime import timedelta
 
@@ -14,6 +14,10 @@ from app.services.user import user_service
 from app.db.models.user import User
 from app.core.config import settings
 from app.core.security import create_access_token
+
+jose = import_module("jose")
+jwt = import_module("jose.jwt")
+JWTError = jose.JWTError
 
 router = APIRouter()
 
@@ -48,7 +52,13 @@ async def refresh_token(
             detail="Could not validate credentials",
         )
         
-    user = await user_service.get(db, id=int(token_data.sub))
+    sub = token_data.sub
+    if sub is None:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Could not validate credentials",
+        )
+    user = await user_service.get(db, id=int(sub))
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
         

@@ -14,11 +14,11 @@ class ActeMedicalRepository(BaseRepository[ActeMedical, ActeMedicalCreate, ActeM
             ActeMedical.prenom_patient.ilike(f"%{prenom}%")
         )
         result = await db.execute(query)
-        return result.scalars().all()
+        return list(result.scalars().all())
         
     async def get_by_medecin(self, db: AsyncSession, *, medecin_id: int) -> List[ActeMedical]:
         query = select(ActeMedical).where(ActeMedical.medecin_id == medecin_id)
         result = await db.execute(query)
-        return result.scalars().all()
+        return list(result.scalars().all())
 
 acte_medical = ActeMedicalRepository(ActeMedical)

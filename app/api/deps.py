@@ -1,7 +1,7 @@
-from typing import Annotated, Generator
+from typing import Annotated
+from importlib import import_module
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
-from jose import jwt, JWTError
 from pydantic import ValidationError
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -10,6 +10,10 @@ from app.db.database import get_db
 from app.db.models.user import User
 from app.schemas.token import TokenPayload
 from app.services.user import user_service
+
+jose = import_module("jose")
+jwt = import_module("jose.jwt")
+JWTError = jose.JWTError
 
 reusable_oauth2 = OAuth2PasswordBearer(
     tokenUrl=f"{settings.API_V1_STR}/auth/login"
@@ -30,7 +34,13 @@ async def get_current_user(
             detail="Could not validate credentials",
         )
     
-    user = await user_service.get(db, id=int(token_data.sub))
+    sub = token_data.sub
+    if sub is None:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Could not validate credentials",
+        )
+    user = await user_service.get(db, id=int(sub))
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
     return user

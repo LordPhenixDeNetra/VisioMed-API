@@ -1,8 +1,11 @@
-from typing import Optional, Any
-from sqlalchemy import String, Integer, ForeignKey, JSON
+from typing import Optional, Any, TYPE_CHECKING
+from sqlalchemy import String, ForeignKey, JSON
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.db.base import Base, TimestampMixin, UUIDMixin
+
+if TYPE_CHECKING:
+    from app.db.models.user import User
 
 class AuditLog(Base, TimestampMixin, UUIDMixin):
     """

@@ -1,4 +1,4 @@
-from typing import Any, Generic, List, Optional, Type, TypeVar, Union
+from typing import Any, Generic, List, Optional, TypeVar, Union
 from uuid import UUID
 from sqlalchemy.ext.asyncio import AsyncSession
 from pydantic import BaseModel

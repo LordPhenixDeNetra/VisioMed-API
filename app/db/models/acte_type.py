@@ -1,8 +1,11 @@
-from typing import Optional, List
+from typing import Optional, TYPE_CHECKING
 from sqlalchemy import String, Text, ForeignKey, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.db.base import Base, TimestampMixin, UUIDMixin
+
+if TYPE_CHECKING:
+    from app.db.models.service import Service
 
 class ActeType(Base, TimestampMixin, UUIDMixin):
     """
