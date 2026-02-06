@@ -37,10 +37,27 @@ async def create_acte(
     """
     Create new medical act.
     """
-    # Auto-assign created_by_id if we had it in schema, but for now schema doesn't force it
-    # We could update schema or handle it in service if needed.
-    # For now standard create.
     return await acte_medical_service.create(db, obj_in=acte_in)
+
+@router.patch("/{acte_id}", response_model=ActeMedicalResponse)
+async def update_acte(
+    *,
+    db: Annotated[AsyncSession, Depends(deps.get_db)],
+    acte_id: int,
+    acte_in: ActeMedicalUpdate,
+    current_user: User = Depends(deps.get_current_active_user),
+) -> Any:
+    """
+    Update a medical act.
+    """
+    acte = await acte_medical_service.get(db, id=acte_id)
+    if not acte:
+        raise HTTPException(status_code=404, detail="Acte Medical not found")
+    
+    # Check permissions if needed (e.g. only creator or admin can update)
+    # For now, allow logged in users (or refine to medecin/admin)
+    
+    return await acte_medical_service.update(db, db_obj=acte, obj_in=acte_in)
 
 @router.get("/tarif-actif", response_model=Optional[TarifResponse])
 async def get_active_tarif(

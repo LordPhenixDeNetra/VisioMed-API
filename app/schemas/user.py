@@ -1,8 +1,9 @@
-from typing import Optional
+from typing import Optional, List
 from uuid import UUID
 from datetime import datetime
 
 from pydantic import BaseModel, EmailStr, Field, ConfigDict
+from app.schemas.role import RoleResponse
 
 # Shared properties
 class UserBase(BaseModel):
@@ -22,6 +23,9 @@ class UserCreate(UserBase):
     specialite: Optional[str] = None
     desk_number: Optional[str] = None
     department_access: Optional[str] = None
+    
+    # Roles
+    roles: Optional[List[int]] = []
 
 # Properties to receive via API on update
 class UserUpdate(BaseModel):
@@ -37,18 +41,24 @@ class UserUpdate(BaseModel):
     specialite: Optional[str] = None
     desk_number: Optional[str] = None
     department_access: Optional[str] = None
+    
+    # Roles
+    roles: Optional[List[int]] = None
 
 # Properties to return to client
 class UserResponse(UserBase):
     id: int
     uuid: UUID
     created_at: datetime
-    updated_at: datetime
+    updated_at: Optional[datetime] = None
     
     # Specific fields
     matricule: Optional[str] = None
     specialite: Optional[str] = None
     desk_number: Optional[str] = None
     department_access: Optional[str] = None
+    
+    # Relationships
+    roles: List[RoleResponse] = []
 
     model_config = ConfigDict(from_attributes=True)

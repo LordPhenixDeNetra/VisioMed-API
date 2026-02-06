@@ -32,6 +32,19 @@ async def create_role(
 ) -> Any:
     return await role_service.create(db, obj_in=role_in)
 
+@router.patch("/roles/{role_id}", response_model=RoleResponse)
+async def update_role(
+    *,
+    db: Annotated[AsyncSession, Depends(deps.get_db)],
+    role_id: int,
+    role_in: RoleUpdate,
+    current_user: User = Depends(deps.get_current_active_superuser),
+) -> Any:
+    role = await role_service.get(db, id=role_id)
+    if not role:
+        raise HTTPException(status_code=404, detail="Role not found")
+    return await role_service.update(db, db_obj=role, obj_in=role_in)
+
 # --- Services ---
 @router.get("/services", response_model=List[ServiceResponse])
 async def read_services(
@@ -51,6 +64,19 @@ async def create_service(
 ) -> Any:
     return await service_service.create(db, obj_in=service_in)
 
+@router.patch("/services/{service_id}", response_model=ServiceResponse)
+async def update_service(
+    *,
+    db: Annotated[AsyncSession, Depends(deps.get_db)],
+    service_id: int,
+    service_in: ServiceUpdate,
+    current_user: User = Depends(deps.get_current_active_superuser),
+) -> Any:
+    service = await service_service.get(db, id=service_id)
+    if not service:
+        raise HTTPException(status_code=404, detail="Service not found")
+    return await service_service.update(db, db_obj=service, obj_in=service_in)
+
 # --- Acte Types ---
 @router.get("/actes-types", response_model=List[ActeTypeResponse])
 async def read_actes_types(
@@ -69,3 +95,16 @@ async def create_acte_type(
     current_user: User = Depends(deps.get_current_active_superuser),
 ) -> Any:
     return await acte_type_service.create(db, obj_in=acte_type_in)
+
+@router.patch("/actes-types/{acte_type_id}", response_model=ActeTypeResponse)
+async def update_acte_type(
+    *,
+    db: Annotated[AsyncSession, Depends(deps.get_db)],
+    acte_type_id: int,
+    acte_type_in: ActeTypeUpdate,
+    current_user: User = Depends(deps.get_current_active_superuser),
+) -> Any:
+    acte_type = await acte_type_service.get(db, id=acte_type_id)
+    if not acte_type:
+        raise HTTPException(status_code=404, detail="Acte Type not found")
+    return await acte_type_service.update(db, db_obj=acte_type, obj_in=acte_type_in)

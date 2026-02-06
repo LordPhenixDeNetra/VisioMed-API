@@ -43,8 +43,8 @@ async def create_user(
 @router.get("/{user_id}", response_model=UserResponse)
 async def read_user_by_id(
     user_id: int,
-    current_user: User = Depends(deps.get_current_active_user),
     db: Annotated[AsyncSession, Depends(deps.get_db)],
+    current_user: User = Depends(deps.get_current_active_user),
 ) -> Any:
     """
     Get a specific user by id.
@@ -60,7 +60,7 @@ async def read_user_by_id(
         )
     return user
 
-@router.put("/{user_id}", response_model=UserResponse)
+@router.patch("/{user_id}", response_model=UserResponse)
 async def update_user(
     *,
     db: Annotated[AsyncSession, Depends(deps.get_db)],
