@@ -52,7 +52,7 @@ class Administrateur(User):
     # For now, inheritance structure is prepared for future extension
 
     __mapper_args__ = {
-        "polymorphic_identity": ROLE_ADMIN,
+        "polymorphic_identity": TYPE_ADMIN,
     }
 
 
@@ -74,7 +74,7 @@ class Medecin(User):
     # )
 
     __mapper_args__ = {
-        "polymorphic_identity": ROLE_MEDECIN,
+        "polymorphic_identity": TYPE_MEDECIN,
     }
 
 
@@ -107,5 +107,5 @@ class Visualiseur(User):
     department_access: Mapped[Optional[str]] = mapped_column(String(100), nullable=True, comment="Département accessible en lecture")
 
     __mapper_args__ = {
-        "polymorphic_identity": ROLE_VISUALISEUR,
+        "polymorphic_identity": TYPE_VISUALISEUR,
     }

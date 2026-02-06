@@ -1,4 +1,4 @@
-import uuid
+import uuid as uuid_pkg
 from datetime import datetime
 from typing import Any
 from sqlalchemy import MetaData, Uuid
@@ -46,10 +46,10 @@ class UUIDMixin:
     Mixin to add a public UUID to a model (in addition to the internal integer PK).
     This allows exposing safe IDs in APIs while keeping fast integer joins internally.
     """
-    uuid: Mapped[uuid.UUID] = mapped_column(
+    uuid: Mapped[uuid_pkg.UUID] = mapped_column(
         Uuid(as_uuid=True),
         primary_key=False,
-        default=uuid.uuid4,
+        default=uuid_pkg.uuid4,
         unique=True,
         index=True,
         nullable=False,
