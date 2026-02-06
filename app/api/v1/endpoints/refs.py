@@ -45,6 +45,18 @@ async def update_role(
         raise HTTPException(status_code=404, detail="Role not found")
     return await role_service.update(db, db_obj=role, obj_in=role_in)
 
+@router.delete("/roles/{role_id}", response_model=RoleResponse)
+async def delete_role(
+    *,
+    db: Annotated[AsyncSession, Depends(deps.get_db)],
+    role_id: int,
+    current_user: User = Depends(deps.get_current_active_superuser),
+) -> Any:
+    role = await role_service.remove(db, id=role_id)
+    if not role:
+        raise HTTPException(status_code=404, detail="Role not found")
+    return role
+
 # --- Services ---
 @router.get("/services", response_model=List[ServiceResponse])
 async def read_services(
@@ -77,6 +89,18 @@ async def update_service(
         raise HTTPException(status_code=404, detail="Service not found")
     return await service_service.update(db, db_obj=service, obj_in=service_in)
 
+@router.delete("/services/{service_id}", response_model=ServiceResponse)
+async def delete_service(
+    *,
+    db: Annotated[AsyncSession, Depends(deps.get_db)],
+    service_id: int,
+    current_user: User = Depends(deps.get_current_active_superuser),
+) -> Any:
+    service = await service_service.remove(db, id=service_id)
+    if not service:
+        raise HTTPException(status_code=404, detail="Service not found")
+    return service
+
 # --- Acte Types ---
 @router.get("/actes-types", response_model=List[ActeTypeResponse])
 async def read_actes_types(
@@ -108,3 +132,15 @@ async def update_acte_type(
     if not acte_type:
         raise HTTPException(status_code=404, detail="Acte Type not found")
     return await acte_type_service.update(db, db_obj=acte_type, obj_in=acte_type_in)
+
+@router.delete("/actes-types/{acte_type_id}", response_model=ActeTypeResponse)
+async def delete_acte_type(
+    *,
+    db: Annotated[AsyncSession, Depends(deps.get_db)],
+    acte_type_id: int,
+    current_user: User = Depends(deps.get_current_active_superuser),
+) -> Any:
+    acte_type = await acte_type_service.remove(db, id=acte_type_id)
+    if not acte_type:
+        raise HTTPException(status_code=404, detail="Acte Type not found")
+    return acte_type

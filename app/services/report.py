@@ -1,10 +1,9 @@
-from typing import List, Dict, Any, Optional
+from typing import List, Dict, Any
 from datetime import date
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, func, and_
 
 from app.db.models.acte_medical import ActeMedical
-from app.db.models.tarif import Tarif
 
 class ReportService:
     async def get_financial_summary(
@@ -34,6 +33,36 @@ class ReportService:
             "total_revenue": row.total_revenue or 0,
             "total_acts": row.total_acts or 0
         }
+
+    async def get_actes_export_data(
+        self,
+        db: AsyncSession,
+        start_date: date,
+        end_date: date
+    ) -> List[Dict[str, Any]]:
+        query = select(
+            ActeMedical.date_acte,
+            ActeMedical.prenom_patient,
+            ActeMedical.nom_patient,
+            ActeMedical.montant
+        ).where(
+            and_(
+                func.date(ActeMedical.date_acte) >= start_date,
+                func.date(ActeMedical.date_acte) <= end_date
+            )
+        ).order_by(ActeMedical.date_acte.asc())
+
+        result = await db.execute(query)
+        rows = result.all()
+
+        return [
+            {
+                "Date": row.date_acte.date(),
+                "Patient": f"{row.prenom_patient} {row.nom_patient}",
+                "Montant": float(row.montant),
+            }
+            for row in rows
+        ]
 
     async def get_acts_by_service(
         self,

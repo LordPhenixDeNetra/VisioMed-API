@@ -33,12 +33,7 @@ async def export_excel(
     """
     Export medical acts to Excel.
     """
-    # TODO: Fetch real data from ActeService filtering by date
-    # For now, demo data
-    data = [
-        {"Date": "2023-01-01", "Patient": "John Doe", "Montant": 10000},
-        {"Date": "2023-01-02", "Patient": "Jane Doe", "Montant": 15000},
-    ]
+    data = await report_service.get_actes_export_data(db, start_date, end_date)
     
     file_stream = export_service.generate_excel(data)
     

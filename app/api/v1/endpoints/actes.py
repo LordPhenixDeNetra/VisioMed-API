@@ -59,6 +59,18 @@ async def update_acte(
     
     return await acte_medical_service.update(db, db_obj=acte, obj_in=acte_in)
 
+@router.delete("/{acte_id}", response_model=ActeMedicalResponse)
+async def delete_acte(
+    *,
+    db: Annotated[AsyncSession, Depends(deps.get_db)],
+    acte_id: int,
+    current_user: User = Depends(deps.get_current_active_user),
+) -> Any:
+    acte = await acte_medical_service.remove(db, id=acte_id)
+    if not acte:
+        raise HTTPException(status_code=404, detail="Acte Medical not found")
+    return acte
+
 @router.get("/tarif-actif", response_model=Optional[TarifResponse])
 async def get_active_tarif(
     service_id: int,

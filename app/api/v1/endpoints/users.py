@@ -77,3 +77,15 @@ async def update_user(
     
     user = await user_service.update(db, db_obj=user, obj_in=user_in)
     return user
+
+@router.delete("/{user_id}", response_model=UserResponse)
+async def delete_user(
+    *,
+    db: Annotated[AsyncSession, Depends(deps.get_db)],
+    user_id: int,
+    current_user: User = Depends(deps.get_current_active_superuser),
+) -> Any:
+    user = await user_service.remove(db, id=user_id)
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    return user
