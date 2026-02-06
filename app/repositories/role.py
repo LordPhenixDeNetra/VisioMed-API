@@ -3,8 +3,11 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.db.models.role import Role, Permission
-from app.schemas.role import RoleCreate, RoleUpdate
+from app.schemas.role import RoleCreate, RoleUpdate, PermissionCreate, PermissionUpdate
 from app.repositories.base import BaseRepository
+
+class PermissionRepository(BaseRepository[Permission, PermissionCreate, PermissionUpdate]):
+    pass
 
 class RoleRepository(BaseRepository[Role, RoleCreate, RoleUpdate]):
     
@@ -53,3 +56,4 @@ class RoleRepository(BaseRepository[Role, RoleCreate, RoleUpdate]):
         return result.scalars().first()
 
 role = RoleRepository(Role)
+permission = PermissionRepository(Permission)

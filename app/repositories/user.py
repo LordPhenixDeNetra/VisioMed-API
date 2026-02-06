@@ -38,4 +38,4 @@ class UserRepository(BaseRepository[User, CreateSchemaType, UpdateSchemaType]):
         return await self.get_by_username(db, username=identifier)
 
 
-user_repo = UserRepository(User)
+user = UserRepository(User)
