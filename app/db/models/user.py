@@ -3,12 +3,13 @@ from sqlalchemy import String, Boolean, ForeignKey, Text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.db.base import Base, TimestampMixin, UUIDMixin
+from app.db.models.role import Role, user_roles
 
-# Constants for Roles to ensure consistency
-ROLE_ADMIN = "administrateur"
-ROLE_MEDECIN = "medecin"
-ROLE_SECRETAIRE = "secretaire"
-ROLE_VISUALISEUR = "visualiseur"
+# Constants for User Types (Identity)
+TYPE_ADMIN = "administrateur"
+TYPE_MEDECIN = "medecin"
+TYPE_SECRETAIRE = "secretaire"
+TYPE_VISUALISEUR = "visualiseur"
 
 
 class User(Base, TimestampMixin, UUIDMixin):
@@ -27,15 +28,15 @@ class User(Base, TimestampMixin, UUIDMixin):
     is_active: Mapped[bool] = mapped_column(Boolean, default=True, server_default="true", index=True)
     
     # Discriminator column for polymorphism
-    role: Mapped[str] = mapped_column(String(50), nullable=False, index=True)
+    type: Mapped[str] = mapped_column(String(50), nullable=False, index=True)
 
     __mapper_args__ = {
-        "polymorphic_on": "role",
+        "polymorphic_on": "type",
         "polymorphic_identity": "user",
     }
 
     def __repr__(self):
-        return f"<User {self.email} ({self.role})>"
+        return f"<User {self.email} ({self.type})>"
 
 
 class Administrateur(User):
@@ -90,7 +91,7 @@ class Secretaire(User):
     desk_number: Mapped[Optional[str]] = mapped_column(String(20), nullable=True)
 
     __mapper_args__ = {
-        "polymorphic_identity": ROLE_SECRETAIRE,
+        "polymorphic_identity": TYPE_SECRETAIRE,
     }
 
 
