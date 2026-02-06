@@ -18,8 +18,8 @@ class AuditLog(Base, TimestampMixin, UUIDMixin):
     ip_address: Mapped[Optional[str]] = mapped_column(String(45), nullable=True) # IPv6 ready
     
     # Action
-    action: Mapped[str] = mapped_column(String(50), nullable=False) # CREATE, UPDATE, DELETE, LOGIN, etc.
-    resource_type: Mapped[str] = mapped_column(String(50), nullable=False) # ActeMedical, User, etc.
+    action: Mapped[str] = mapped_column(String(50), nullable=False, index=True) # CREATE, UPDATE, DELETE, LOGIN, etc.
+    resource_type: Mapped[str] = mapped_column(String(50), nullable=False, index=True) # ActeMedical, User, etc.
     resource_id: Mapped[Optional[str]] = mapped_column(String(50), nullable=True) # ID of the affected resource
     
     # Data Changes (using JSONB in Postgres for efficiency)

@@ -23,10 +23,10 @@ class User(Base, TimestampMixin, UUIDMixin):
     password_hash: Mapped[str] = mapped_column(String(255), nullable=False)
     nom: Mapped[str] = mapped_column(String(100), nullable=False)
     prenom: Mapped[str] = mapped_column(String(100), nullable=False)
-    is_active: Mapped[bool] = mapped_column(Boolean, default=True, server_default="true")
+    is_active: Mapped[bool] = mapped_column(Boolean, default=True, server_default="true", index=True)
     
     # Discriminator column for polymorphism
-    role: Mapped[str] = mapped_column(String(50), nullable=False)
+    role: Mapped[str] = mapped_column(String(50), nullable=False, index=True)
 
     __mapper_args__ = {
         "polymorphic_on": "role",

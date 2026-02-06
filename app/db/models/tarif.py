@@ -24,7 +24,7 @@ class Tarif(Base, TimestampMixin, UUIDMixin):
     montant: Mapped[float] = mapped_column(Numeric(10, 2), nullable=False, comment="Montant en FCFA")
     
     # Validity Period
-    date_debut: Mapped[date] = mapped_column(Date, nullable=False, default=date.today)
+    date_debut: Mapped[date] = mapped_column(Date, nullable=False, default=date.today, index=True)
     date_fin: Mapped[Optional[date]] = mapped_column(Date, nullable=True)
 
     # Relationships

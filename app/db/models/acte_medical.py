@@ -17,7 +17,7 @@ class ActeMedical(Base, TimestampMixin, UUIDMixin):
     # Patient Info
     nom_patient: Mapped[str] = mapped_column(String(100), nullable=False, index=True)
     prenom_patient: Mapped[str] = mapped_column(String(100), nullable=False, index=True)
-    numero_bc: Mapped[Optional[str]] = mapped_column(String(50), nullable=True, comment="Numéro Bon de Commande / Prise en charge")
+    numero_bc: Mapped[Optional[str]] = mapped_column(String(50), nullable=True, index=True, comment="Numéro Bon de Commande / Prise en charge")
     
     # Act Details
     date_acte: Mapped[datetime] = mapped_column(DateTime, default=datetime.now, index=True)
@@ -26,6 +26,7 @@ class ActeMedical(Base, TimestampMixin, UUIDMixin):
     
     # Financial Snapshot (Stored at creation time to preserve history even if tariffs change)
     montant: Mapped[float] = mapped_column(Numeric(10, 2), nullable=False)
+    statut: Mapped[str] = mapped_column(String(20), default="NON_PAYE", index=True, comment="Statut paiement: NON_PAYE, PAYE, GRATUIT")
     
     # Foreign Keys
     acte_id: Mapped[int] = mapped_column(ForeignKey("actes_types.id", ondelete="RESTRICT"), nullable=False, index=True)
