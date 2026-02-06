@@ -1,35 +1,31 @@
 from typing import Any, Dict, Optional
+from fastapi import HTTPException, status
 
-class AppError(Exception):
-    """Base exception for application errors."""
-    pass
+class BaseAPIException(HTTPException):
+    status_code = 500
+    detail = "Une erreur serveur est survenue."
 
-class EntityNotFound(AppError):
-    """Raised when an entity is not found in the database."""
-    def __init__(self, entity_name: str, entity_id: Any = None):
-        self.entity_name = entity_name
-        self.entity_id = entity_id
-        super().__init__(f"{entity_name} not found{f' with id {entity_id}' if entity_id else ''}")
+    def __init__(self, detail: Optional[str] = None, headers: Optional[Dict[str, Any]] = None):
+        if detail:
+            self.detail = detail
+        super().__init__(status_code=self.status_code, detail=self.detail, headers=headers)
 
-class EntityAlreadyExists(AppError):
-    """Raised when an entity already exists (unique constraint violation)."""
-    def __init__(self, entity_name: str, field: str, value: Any):
-        self.entity_name = entity_name
-        self.field = field
-        self.value = value
-        super().__init__(f"{entity_name} with {field}={value} already exists")
+class NotFoundException(BaseAPIException):
+    status_code = status.HTTP_404_NOT_FOUND
+    detail = "Ressource introuvable."
 
-class AuthenticationError(AppError):
-    """Raised when authentication fails."""
-    def __init__(self, detail: str = "Authentication failed"):
-        super().__init__(detail)
+class PermissionDeniedException(BaseAPIException):
+    status_code = status.HTTP_403_FORBIDDEN
+    detail = "Vous n'avez pas les permissions nécessaires."
 
-class PermissionDenied(AppError):
-    """Raised when user doesn't have permission."""
-    def __init__(self, detail: str = "Permission denied"):
-        super().__init__(detail)
+class AuthenticationFailedException(BaseAPIException):
+    status_code = status.HTTP_401_UNAUTHORIZED
+    detail = "Authentification échouée."
+    
+class BadRequestException(BaseAPIException):
+    status_code = status.HTTP_400_BAD_REQUEST
+    detail = "Requête invalide."
 
-class BusinessLogicError(AppError):
-    """Raised when a business rule is violated."""
-    def __init__(self, detail: str):
-        super().__init__(detail)
+class ConflictException(BaseAPIException):
+    status_code = status.HTTP_409_CONFLICT
+    detail = "Conflit de données."

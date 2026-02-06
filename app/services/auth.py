@@ -26,7 +26,7 @@ class AuthService:
         if not user:
             return False
             
-        if not verify_password(password, user.hashed_password):
+        if not verify_password(password, user.password_hash):
             return False
             
         if not user.is_active:
@@ -54,6 +54,17 @@ class AuthService:
             subject=user.id, expires_delta=access_token_expires
         )
         
-        return Token(access_token=access_token, token_type="bearer")
+        refresh_token_expires = timedelta(days=settings.REFRESH_TOKEN_EXPIRE_DAYS)
+        refresh_token = create_refresh_token(
+            subject=user.id, expires_delta=refresh_token_expires
+        )
+        
+        # TODO: Store refresh token in database (RefreshToken table) for revocation support
+        
+        return Token(
+            access_token=access_token, 
+            token_type="bearer",
+            refresh_token=refresh_token
+        )
 
 auth_service = AuthService()

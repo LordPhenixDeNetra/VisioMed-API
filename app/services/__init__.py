@@ -8,3 +8,5 @@ from .type_prise_charge import type_prise_charge_service
 from .tarif import tarif_service
 from .acte_medical import acte_medical_service
 from .audit_log import audit_log_service
+from .report import report_service
+from .export import export_service
