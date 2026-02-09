@@ -21,25 +21,42 @@ JWTError = jose.JWTError
 
 router = APIRouter()
 
-@router.post("/login", response_model=Token)
+@router.post("/login", response_model=Token, summary="Connexion utilisateur", description="Authentifie un utilisateur via OAuth2 (username/password) et retourne un token d'accès JWT ainsi qu'un refresh token.")
 async def login_access_token(
     db: Annotated[AsyncSession, Depends(deps.get_db)],
     form_data: Annotated[OAuth2PasswordRequestForm, Depends()]
 ) -> Token:
     """
-    OAuth2 compatible token login, get an access token for future requests.
+    **Description détaillée :**
+    Cet endpoint permet à un utilisateur de se connecter en fournissant son nom d'utilisateur (ou email) et son mot de passe.
+    
+    **Paramètres :**
+    - `username` : Nom d'utilisateur ou email.
+    - `password` : Mot de passe de l'utilisateur.
+    
+    **Réponse :**
+    - `access_token` : Jeton JWT pour l'authentification des requêtes futures.
+    - `token_type` : Type de jeton (généralement "bearer").
+    - `refresh_token` : Jeton permettant d'obtenir un nouveau token d'accès sans se reconnecter.
     """
     return await auth_service.login(
         db, username_or_email=form_data.username, password=form_data.password
     )
 
-@router.post("/refresh-token", response_model=Token)
+@router.post("/refresh-token", response_model=Token, summary="Rafraîchir le token", description="Génère un nouveau token d'accès à partir d'un refresh token valide.")
 async def refresh_token(
     db: Annotated[AsyncSession, Depends(deps.get_db)],
-    refresh_token: str = Body(..., embed=True),
+    refresh_token: str = Body(..., embed=True, description="Le refresh token obtenu lors de la connexion"),
 ) -> Token:
     """
-    Refresh access token.
+    **Description détaillée :**
+    Permet de renouveler le token d'accès (access token) lorsque celui-ci est expiré, sans obliger l'utilisateur à ressaisir ses identifiants.
+    
+    **Paramètres :**
+    - `refresh_token` : Le token de rafraîchissement actuel.
+    
+    **Réponse :**
+    - Un nouvel `access_token` et le `refresh_token` (qui peut être le même ou un nouveau selon la politique de rotation).
     """
     try:
         payload = jwt.decode(
@@ -76,11 +93,19 @@ async def refresh_token(
         refresh_token=refresh_token # Return same refresh token (rotation logic can be added later)
     )
 
-@router.get("/me", response_model=UserResponse)
+@router.get("/me", response_model=UserResponse, summary="Profil utilisateur courant", description="Récupère les informations détaillées de l'utilisateur actuellement connecté.")
 async def read_users_me(
     current_user: Annotated[User, Depends(deps.get_current_active_user)]
 ) -> User:
     """
-    Get current user.
+    **Description détaillée :**
+    Retourne l'objet utilisateur complet correspondant au token JWT fourni dans l'en-tête Authorization.
+    
+    **Permissions :**
+    - Nécessite un token d'accès valide.
+    - L'utilisateur doit être actif.
+    
+    **Réponse :**
+    - Informations de l'utilisateur (id, email, nom, rôles, etc.).
     """
     return current_user

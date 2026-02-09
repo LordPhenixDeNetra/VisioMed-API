@@ -1,8 +1,8 @@
-from typing import Optional, List
+from typing import Optional, List, Any
 from uuid import UUID
 from datetime import datetime
 
-from pydantic import BaseModel, EmailStr, Field, ConfigDict
+from pydantic import BaseModel, EmailStr, Field, ConfigDict, model_validator
 from app.schemas.role import RoleResponse
 
 # Shared properties
@@ -62,3 +62,35 @@ class UserResponse(UserBase):
     roles: List[RoleResponse] = []
 
     model_config = ConfigDict(from_attributes=True)
+
+    @model_validator(mode='before')
+    @classmethod
+    def flatten_polymorphic_fields(cls, v: Any) -> Any:
+        # If it's an SQLAlchemy model (or similar object), manually extract fields
+        # to handle missing attributes in polymorphic subclasses
+        if hasattr(v, "__table__"):
+            def safe_getattr(obj, name, default=None):
+                try:
+                    return getattr(obj, name, default)
+                except Exception:
+                    # Handle cases where attribute access fails (e.g. DetachedInstanceError)
+                    return default
+
+            return {
+                "id": v.id,
+                "uuid": v.uuid,
+                "email": v.email,
+                "username": v.username,
+                "nom": v.nom,
+                "prenom": v.prenom,
+                "is_active": v.is_active,
+                "type": v.type,
+                "created_at": v.created_at,
+                "updated_at": v.updated_at,
+                "matricule": safe_getattr(v, "matricule"),
+                "specialite": safe_getattr(v, "specialite"),
+                "desk_number": safe_getattr(v, "desk_number"),
+                "department_access": safe_getattr(v, "department_access"),
+                "roles": safe_getattr(v, "roles", []),
+            }
+        return v

@@ -32,3 +32,6 @@ dist/
 *.egg-info/
 
 initial_data.py
+
+API_USAGE.md
+error.txt

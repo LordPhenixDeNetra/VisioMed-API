@@ -4,19 +4,19 @@ import uuid as uuid_pkg
 from datetime import datetime
 
 class TypePriseChargeBase(BaseModel):
-    nom: str
-    taux_couverture: float # Pourcentage, ex: 80.0 pour 80%
+    code: str
+    libelle: str
     description: Optional[str] = None
-    est_actif: bool = True
+    is_active: bool = True
 
 class TypePriseChargeCreate(TypePriseChargeBase):
     pass
 
 class TypePriseChargeUpdate(BaseModel):
-    nom: Optional[str] = None
-    taux_couverture: Optional[float] = None
+    code: Optional[str] = None
+    libelle: Optional[str] = None
     description: Optional[str] = None
-    est_actif: Optional[bool] = None
+    is_active: Optional[bool] = None
 
 class TypePriseChargeResponse(TypePriseChargeBase):
     id: int

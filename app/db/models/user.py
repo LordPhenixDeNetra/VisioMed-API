@@ -1,8 +1,11 @@
-from typing import Optional
+from typing import Optional, List, TYPE_CHECKING
 from sqlalchemy import String, Boolean, ForeignKey
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.db.base import Base, TimestampMixin, UUIDMixin
+
+if TYPE_CHECKING:
+    from app.db.models.role import Role
 
 # Constants for User Types (Identity)
 TYPE_ADMIN = "administrateur"
@@ -28,6 +31,9 @@ class User(Base, TimestampMixin, UUIDMixin):
     
     # Discriminator column for polymorphism
     type: Mapped[str] = mapped_column(String(50), nullable=False, index=True)
+
+    # Relationships
+    roles: Mapped[List["Role"]] = relationship("Role", secondary="user_roles", lazy="selectin")
 
     __mapper_args__ = {
         "polymorphic_on": "type",
