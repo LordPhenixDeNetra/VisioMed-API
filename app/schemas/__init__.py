@@ -7,6 +7,7 @@ from .type_prise_charge import TypePriseChargeBase, TypePriseChargeCreate, TypeP
 from .tarif import TarifBase, TarifCreate, TarifUpdate, TarifResponse
 from .acte_medical import ActeMedicalBase, ActeMedicalCreate, ActeMedicalUpdate, ActeMedicalResponse
 from .audit_log import AuditLogBase, AuditLogCreate, AuditLogResponse
+from .report import FinancialSummaryResponse
 
 __all__ = [
     "UserBase",
@@ -46,4 +47,5 @@ __all__ = [
     "AuditLogBase",
     "AuditLogCreate",
     "AuditLogResponse",
+    "FinancialSummaryResponse",
 ]
